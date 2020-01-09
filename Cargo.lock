@@ -38,3 +38,22 @@ dependencies = [
 
 [[package]]
 name = "bubo"
+version = "0.1.0"
+dependencies = [
+ "futures-util",
+ "hex",
+ "hmac-sha256",
+ "itertools",
+ "rand",
+ "reqwest",
+ "rust_decimal",
+ "rust_decimal_macros",
+ "serde",
+ "serde_json",
+ "time",
+ "tokio",
+ "tokio-tungstenite",
+]
+
+[[package]]
+name = "bumpalo"
