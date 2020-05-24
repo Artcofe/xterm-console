@@ -935,3 +935,12 @@ dependencies = [
  "num_cpus",
  "once_cell",
  "pin-project-lite",
+ "socket2",
+ "tokio-macros",
+ "tracing",
+ "winapi",
+]
+
+[[package]]
+name = "tokio-macros"
+version = "1.8.0"
