@@ -1,4 +1,7 @@
 [package]
 name = "bubo"
 version = "0.1.0"
-authors = ["Daniil N
+authors = ["Daniil Novikov"]
+edition = "2018"
+
+[
