@@ -5,4 +5,4 @@ authors = ["Daniil Novikov"]
 edition = "2018"
 
 [dependencies]
-fu
+futures-util = { version = 
