@@ -5,4 +5,5 @@ authors = ["Daniil Novikov"]
 edition = "2018"
 
 [dependencies]
-futures-util = { version = "0.3.21", features = [
+futures-util = { version = "0.3.21", features = ["default"] }
+hex =
