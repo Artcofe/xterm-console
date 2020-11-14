@@ -6,4 +6,5 @@ edition = "2018"
 
 [dependencies]
 futures-util = { version = "0.3.21", features = ["default"] }
-hex = { version = "0.4.3", feature
+hex = { version = "0.4.3", features = ["default"] }
+hmac
