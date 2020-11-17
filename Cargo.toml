@@ -7,4 +7,4 @@ edition = "2018"
 [dependencies]
 futures-util = { version = "0.3.21", features = ["default"] }
 hex = { version = "0.4.3", features = ["default"] }
-hmac-sha256 = { version = "1.1.4
+hmac-sha256 = { version = "1.1.4", features = ["defaul
