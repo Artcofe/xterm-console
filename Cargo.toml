@@ -11,4 +11,4 @@ hmac-sha256 = { version = "1.1.4", features = ["default"] }
 itertools = { version = "0.10.3", features = ["default"] }
 rand = { version = "0.8.5", features = ["alloc"]}
 reqwest = { version = "0.11.11", features = ["json"] }
-rust_decimal = { version = "1.26", feat
+rust_decimal = { version = "1.26", features = ["serde-fl
