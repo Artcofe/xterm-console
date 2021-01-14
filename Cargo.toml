@@ -16,4 +16,4 @@ rust_decimal_macros = "1.26"
 serde = { version = "1.0", features = ["derive"] }
 serde_json = { version = "1.0.83", features = ["alloc"] }
 time = { version = "0.3.12", features = ["formatting"] }
-tokio = { version = "1.20.1", fe
+tokio = { version = "1.20.1", features = ["rt-mult
