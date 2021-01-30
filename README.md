@@ -1,1 +1,3 @@
 # bubo
+
+Triangular arbitrag
