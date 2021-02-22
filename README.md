@@ -1,3 +1,5 @@
 # bubo
 
-Triangular arbitrage bot for crypto.c
+Triangular arbitrage bot for crypto.com written using `tokio`.
+
+# H
