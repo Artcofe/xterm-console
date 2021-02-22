@@ -1,3 +1,3 @@
 # bubo
 
-Triangular arbitrag
+Triangular arbitrage bot for crypto.c
