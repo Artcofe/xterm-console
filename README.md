@@ -4,4 +4,6 @@ Triangular arbitrage bot for crypto.com written using `tokio`.
 
 # How to run
 
-`cargo run --rele
+`cargo run --release`
+
+# General des
