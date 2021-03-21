@@ -6,4 +6,6 @@ Triangular arbitrage bot for crypto.com written using `tokio`.
 
 `cargo run --release`
 
-# General des
+# General description
+
+1. An implemen
