@@ -8,4 +8,5 @@ Triangular arbitrage bot for crypto.com written using `tokio`.
 
 # General description
 
-1. An implementation of triangular arbitrage on cry
+1. An implementation of triangular arbitrage on crypto.com exchange.
+2
