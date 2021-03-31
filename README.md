@@ -10,4 +10,4 @@ Triangular arbitrage bot for crypto.com written using `tokio`.
 
 1. An implementation of triangular arbitrage on crypto.com exchange.
 2. The logic is pretty straightforward and is more or less easy to quickly change to test your hypothesis.
-3. Bot is resource-efficient and fast enough to adapt to market chang
+3. Bot is resource-efficient and fast enough to adapt to market changes (tested on a 
