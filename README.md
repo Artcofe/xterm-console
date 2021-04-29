@@ -13,4 +13,4 @@ Triangular arbitrage bot for crypto.com written using `tokio`.
 3. Bot is resource-efficient and fast enough to adapt to market changes (tested on a machine with 1 CPU and 500 MB RAM, consumes ~2% of CPU and tens of MBs of RAM at most).
 4. Doesn't generate profit on the current state of the market and mostly loses money slowly, but can provide insights and technical solutions to the problems that one has to solve anyway to make this kind of software.
 5. May have some non-critical bugs.
-6. May have minor dumb solutio
+6. May have minor dumb solutions which I was 
