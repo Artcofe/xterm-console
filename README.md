@@ -18,4 +18,4 @@ Triangular arbitrage bot for crypto.com written using `tokio`.
 # My experience
 
 I've researched a decent amount of materials on the triangular arbitrage. You might know or have a feeling that there is not a lot of quality content on this topic - and you are right. This is the rare case of the business field where the only way to test your ideas is to actually implement them.
-There are still some research papers and articles on the topic. Unfortunately, most of them are out of
+There are still some research papers and articles on the topic. Unfortunately, most of them are out of touch with the 
