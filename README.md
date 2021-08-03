@@ -19,4 +19,4 @@ Triangular arbitrage bot for crypto.com written using `tokio`.
 
 I've researched a decent amount of materials on the triangular arbitrage. You might know or have a feeling that there is not a lot of quality content on this topic - and you are right. This is the rare case of the business field where the only way to test your ideas is to actually implement them.
 There are still some research papers and articles on the topic. Unfortunately, most of them are out of touch with the realities of trading. This is a common illness for a lot of research papers, and arbitrage is not an exception - the most of those materials are about solving a task of finding arbitrage opportunities by representing an exchange as a graph, solving a problem of detecting the negative cycles on it, etc., etc. But in practice it turns out that writing a brute-force solution and trying to optimize it is better for a few reasons:
-1. Finding arbitrage oppotunities is not 
+1. Finding arbitrage oppotunities is not the main problem if you w
