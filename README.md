@@ -21,4 +21,4 @@ I've researched a decent amount of materials on the triangular arbitrage. You mi
 There are still some research papers and articles on the topic. Unfortunately, most of them are out of touch with the realities of trading. This is a common illness for a lot of research papers, and arbitrage is not an exception - the most of those materials are about solving a task of finding arbitrage opportunities by representing an exchange as a graph, solving a problem of detecting the negative cycles on it, etc., etc. But in practice it turns out that writing a brute-force solution and trying to optimize it is better for a few reasons:
 1. Finding arbitrage oppotunities is not the main problem if you want to write a program that earns money. Triangular arbitrage for an individual chain  is a few multiplications and divisions which can be done very fast.
 2. Thus, you can lower the complexity of your program by optimizing a brute-force approach, which is advanced-grade problem (at least for me as a guy who had no prior experience in writing async applications).
-3. I s
+3. I solved item 2 by a
