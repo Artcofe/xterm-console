@@ -25,4 +25,6 @@ There are still some research papers and articles on the topic. Unfortunately, m
 4. Another problem that comes up frequently is being fast enough to place an order with the correct price point (definitely less than 30 ms, but I didn't do any performance tests). In my case, this was solved by doing all of what's described in item 3.
 5. Taking item 4 into account I should also mention that even if fancy graph-based arbitrage discovery algorithm provides a benefit of e.g. finding the best chain on the whole exchange - it may be way slower than needed to actually make an order that at least has a correct price point that an exchange is going to match.
 
-# 
+# The Real Problem
+
+T
