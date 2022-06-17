@@ -27,4 +27,4 @@ There are still some research papers and articles on the topic. Unfortunately, m
 
 # The Real Problem
 
-The really hard part of writing such bot is 
+The really hard part of writing such bot is a problem of liquidit
