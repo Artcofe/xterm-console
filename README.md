@@ -27,4 +27,4 @@ There are still some research papers and articles on the topic. Unfortunately, m
 
 # The Real Problem
 
-The really hard part of writing such bot is a problem of liquidity and trading vo
+The really hard part of writing such bot is a problem of liquidity and trading volumes. If you write a 
