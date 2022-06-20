@@ -27,4 +27,4 @@ There are still some research papers and articles on the topic. Unfortunately, m
 
 # The Real Problem
 
-The really hard part of writing such bot is a problem of liquidity and trading volumes. If you write a correct arbitrage discovery algorithm - y
+The really hard part of writing such bot is a problem of liquidity and trading volumes. If you write a correct arbitrage discovery algorithm - you'll be able to see quite a 
