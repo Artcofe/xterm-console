@@ -27,4 +27,4 @@ There are still some research papers and articles on the topic. Unfortunately, m
 
 # The Real Problem
 
-The really hard part of writing such bot is a problem of liquidity and trading volumes. If you write a correct arbitrage discovery algorithm - you'll be able to see quite a decent amount of opportunities with nice gains in the range of 1.0
+The really hard part of writing such bot is a problem of liquidity and trading volumes. If you write a correct arbitrage discovery algorithm - you'll be able to see quite a decent amount of opportunities with nice gains in the range of 1.001 to 1.009 in most c
