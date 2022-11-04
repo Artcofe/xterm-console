@@ -31,4 +31,4 @@ The really hard part of writing such bot is a problem of liquidity and trading v
 
 # Conclusions
 
-My experience with this bot (th
+My experience with this bot (this is a third attempt 
