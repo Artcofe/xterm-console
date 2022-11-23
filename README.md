@@ -32,3 +32,5 @@ The really hard part of writing such bot is a problem of liquidity and trading v
 # Conclusions
 
 My experience with this bot (this is a third attempt by the way) leads me to these final thoughts:
+
+1. Arbitrage opportuniti
