@@ -33,4 +33,4 @@ The really hard part of writing such bot is a problem of liquidity and trading v
 
 My experience with this bot (this is a third attempt by the way) leads me to these final thoughts:
 
-1. Arbitrage opportunities are caused by market imbalances, which is basically an asset having a 
+1. Arbitrage opportunities are caused by market imbalances, which is basically an asset having a correct price point 
