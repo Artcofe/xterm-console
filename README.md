@@ -33,4 +33,4 @@ The really hard part of writing such bot is a problem of liquidity and trading v
 
 My experience with this bot (this is a third attempt by the way) leads me to these final thoughts:
 
-1. Arbitrage opportunities are caused by market imbalances, which is basically an asset having a correct price point against one commodity and incorrect against the other (being over- or under-appreciated). To do arbitrage, you need to execute a set of orders, which require liquidity to be filled. Where liquidity is present, bigger volumes are traded, bid-ask spread is less and the pr
+1. Arbitrage opportunities are caused by market imbalances, which is basically an asset having a correct price point against one commodity and incorrect against the other (being over- or under-appreciated). To do arbitrage, you need to execute a set of orders, which require liquidity to be filled. Where liquidity is present, bigger volumes are traded, bid-ask spread is less and the price is the most fai
