@@ -38,3 +38,6 @@ My experience with this bot (this is a third attempt by the way) leads me to the
 3. One should not forget about the big guys with big money co-locating with the exchanges to get exclusive trading opportunities. They may fill the arbitrage gaps faster than we can see them through the public websockets.
 4. I think that such a bot should be a small program with very thin abstractions that are unavoidable. Exchanges' APIs have a lot of weird behaviours and oftentimes do not work as explained in the documentation, thus trying to come up with architecture that can handle all of that will take a lot of time that you could've spent testing your ideas. Most of the time of 2 months spent on this bot I was testing one hypothesis or another. Imagine how much more time I would've spent to come to the same conclusions which seems to be common for the whole crypto market.
 
+# Notes
+
+1. Look for 
