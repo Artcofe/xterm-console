@@ -40,4 +40,4 @@ My experience with this bot (this is a third attempt by the way) leads me to the
 
 # Notes
 
-1. Look for comments starting w
+1. Look for comments starting with "DD:" (design deci
