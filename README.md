@@ -41,4 +41,4 @@ My experience with this bot (this is a third attempt by the way) leads me to the
 # Notes
 
 1. Look for comments starting with "DD:" (design decision) to check out the details of the implementation.
-2. Executing orders simultaneously is more effective than doing them s
+2. Executing orders simultaneously is more effective than doing them sequentially, be
