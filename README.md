@@ -41,4 +41,4 @@ My experience with this bot (this is a third attempt by the way) leads me to the
 # Notes
 
 1. Look for comments starting with "DD:" (design decision) to check out the details of the implementation.
-2. Executing orders simultaneously is more effective than doing them sequentially, because the price updates received in between the executed orders are usually showing that the opportunity is gone. You can do this 
+2. Executing orders simultaneously is more effective than doing them sequentially, because the price updates received in between the executed orders are usually showing that the opportunity is gone. You can do this yourself if you ar
