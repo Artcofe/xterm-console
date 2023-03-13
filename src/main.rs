@@ -27,3 +27,22 @@ const SECRET_KEY: &'static str = ""; // insert your secret key here
 const GAIN_THRESHOLD: Decimal = dec!(1.001); // Execute chains having gain only above this threshold (fees are taken into account)
 const DAY_VOLUME_THRESHOLD: f64 = 3500.0; // Execute chains only with trading pairs having more volume than this threshold
 const CHAINS_APPROX_FRACTION: f32 = 1.0; // Coefficient to work only with a part of all built chains.
+
+// DD: Most of the chains start on just a few currencies line USDT, USDC, BTC.
+// Doesn't make sense to look for other ones as they don't have enough volume
+// for you to execute the chains anyway.
+
+const STARTING_CURRENCIES: [&str; 3] = ["USDT", "USDC", "BTC"];
+const STARTING_BALANCE_USDT: Decimal = dec!(2.0);
+const STARTING_BALANCE_USDC: Decimal = dec!(2.0);
+const STARTING_BALANCE_BTC: Decimal = dec!(0.0001);
+const TRADING_FEE: Decimal = dec!(0.99925);
+
+const USER_MPSC_REQUEST_CAPACITY: usize = 10;
+const USER_BROADCAST_RESPONSE_CAPACITY: usize = 2;
+
+const MARKET_MPSC_REQUEST_CAPACITY: usize = 10;
+const MARKET_BROADCAST_RESPONSE_CAPACITY: usize = 32;
+const MARKET_BROADCAST_DISPATCH_CAPACITY: usize = 32;
+
+const ARB_EXECUTOR_ORDER_TIMEOUT: u64 = 3000;
