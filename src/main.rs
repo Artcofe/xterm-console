@@ -46,3 +46,20 @@ const MARKET_BROADCAST_RESPONSE_CAPACITY: usize = 32;
 const MARKET_BROADCAST_DISPATCH_CAPACITY: usize = 32;
 
 const ARB_EXECUTOR_ORDER_TIMEOUT: u64 = 3000;
+const ARB_EXECUTOR_PENDING_TIMEOUT: u64 = 180000;
+
+// Turn on/off the actual trading.
+const RESEARCH_MODE: bool = false;
+
+// Tools to perform get requests from exchange
+
+#[derive(Debug, Deserialize, Clone)]
+pub struct Response<T> {
+    #[serde(default)]
+    pub id: i64,
+    #[serde(default)]
+    pub method: String,
+    #[serde(deserialize_with = "str_or_i64")]
+    pub code: i64,
+    #[serde(default)]
+    pub result: Option<T>,
