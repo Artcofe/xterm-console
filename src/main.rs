@@ -79,3 +79,17 @@ where
     Ok(match StrOrU64::deserialize(deserializer)? {
         StrOrU64::Str(v) => v.parse().unwrap_or(0), // Ignoring parsing errors
         StrOrU64::I64(v) => v,
+    })
+}
+
+async fn get_exc<T: DeserializeOwned + Default>(client: &reqwest::Client, url: &str) -> Result<T, Box<dyn Error>> {
+    let response = client.get(url).send().await?;
+    let response_body: String = response.text().await?;
+    let response_body_serialized: Response<T> = from_str(response_body.as_str())?;
+    Ok(response_body_serialized.result.unwrap())
+}
+
+// Initial possible chains exploration and management
+
+#[derive(Debug, Deserialize, Default)]
+pub struct TickersData {
