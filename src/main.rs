@@ -93,3 +93,17 @@ async fn get_exc<T: DeserializeOwned + Default>(client: &reqwest::Client, url: &
 
 #[derive(Debug, Deserialize, Default)]
 pub struct TickersData {
+    pub data: Vec<TickerData>,
+}
+
+#[derive(Debug, Deserialize, Default)]
+pub struct Instruments {
+    pub instruments: Vec<Instrument>,
+}
+
+#[derive(Debug, Clone)]
+pub struct ArbitrageChain {
+    pub orders: [Order; 3],
+    pub is_buys: [bool; 3],
+    pub quantity_precisions: [usize; 3],
+    pub starting_currency: String,
