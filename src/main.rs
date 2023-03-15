@@ -63,3 +63,19 @@ pub struct Response<T> {
     pub code: i64,
     #[serde(default)]
     pub result: Option<T>,
+}
+
+fn str_or_i64<'de, D>(deserializer: D) -> Result<i64, D::Error>
+where
+    D: Deserializer<'de>,
+{
+    #[derive(Deserialize)]
+    #[serde(untagged)]
+    enum StrOrU64<'a> {
+        Str(&'a str),
+        I64(i64),
+    }
+
+    Ok(match StrOrU64::deserialize(deserializer)? {
+        StrOrU64::Str(v) => v.parse().unwrap_or(0), // Ignoring parsing errors
+        StrOrU64::I64(v) => v,
