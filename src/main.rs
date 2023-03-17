@@ -123,3 +123,28 @@ pub struct Instrument {
 impl Instruments {
     pub fn filter_day_vol(&mut self, tickers_data: Vec<TickerData>, day_volume_threshold: f64) {
         // DD: Filtering day volumes in some way is necessary due to pairs
+        // with low volumes always contributing to some beefy gains but
+        // not being actually executable (i.e. you can't immediately execute
+        // deals on those pairs at the strict price points you've set)
+        let mut instruments_filtered: Vec<Instrument> = Vec::new();
+        for instrument in self.instruments.iter() {
+            for ticker in tickers_data.iter() {
+                if ticker.instrument.as_ref().unwrap() == &instrument.instrument_name && ticker.vol_traded_day_usd > day_volume_threshold {
+                    instruments_filtered.push(instrument.clone());
+                }
+            }
+        }
+        self.instruments = instruments_filtered;
+    }
+
+    pub fn get_chains(&self, starting_currencies: Vec<&str>, approx_fraction: f32) -> (Vec<ArbitrageChain>, Vec<String>) {
+        // DD: Computing the chains the dumbest way possible as it is
+        // not a performance-sensitive part of the program. Returning
+        // back the actual orders that have to be sent to the exchange.
+        let mut arbitrage_chains: Vec<ArbitrageChain> = Vec::new();
+        let mut instruments_all_chains: HashSet<String> = HashSet::new();
+
+        for starting_currency in starting_currencies {
+            for first_instrument in self
+                .instruments
+                .iter()
