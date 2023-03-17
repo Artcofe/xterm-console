@@ -107,3 +107,19 @@ pub struct ArbitrageChain {
     pub is_buys: [bool; 3],
     pub quantity_precisions: [usize; 3],
     pub starting_currency: String,
+}
+
+#[derive(Debug, Deserialize, Clone)]
+pub struct Instrument {
+    pub instrument_name: String,
+    pub quote_currency: String,
+    pub base_currency: String,
+    pub price_decimals: usize,
+    pub quantity_decimals: usize,
+    pub max_quantity: String,
+    pub min_quantity: String,
+}
+
+impl Instruments {
+    pub fn filter_day_vol(&mut self, tickers_data: Vec<TickerData>, day_volume_threshold: f64) {
+        // DD: Filtering day volumes in some way is necessary due to pairs
