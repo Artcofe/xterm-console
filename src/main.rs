@@ -162,3 +162,29 @@ impl Instruments {
                 }
 
                 for second_instrument in self.instruments.iter().filter(|v| v.instrument_name != first_instrument.instrument_name) {
+                    let mut new_chain_second_level = new_chain.clone();
+                    let asset_to_add: String;
+                    if second_instrument.quote_currency == new_chain_second_level[1] {
+                        asset_to_add = second_instrument.base_currency.clone();
+                    } else if second_instrument.base_currency == new_chain_second_level[1] {
+                        asset_to_add = second_instrument.quote_currency.clone();
+                    } else {
+                        continue;
+                    }
+
+                    let possible_third_instrument_name = format!("{}_{}", starting_currency, asset_to_add);
+                    let possible_third_instrument_name_rev = format!("{}_{}", asset_to_add, starting_currency);
+
+                    for third_instrument in self
+                        .instruments
+                        .iter()
+                        .filter(|v| v.base_currency == starting_currency || v.quote_currency == starting_currency)
+                    {
+                        if (possible_third_instrument_name == third_instrument.instrument_name
+                            || possible_third_instrument_name_rev == third_instrument.instrument_name)
+                            && rand::random::<f32>() < approx_fraction
+                        {
+                            new_chain_second_level[2] = asset_to_add;
+
+                            let chain_instruments: [Instrument; 3] = [first_instrument.clone(), second_instrument.clone(), third_instrument.clone()];
+                            let mut sides: [String; 3] = ["".to_owned(), "".to_owned(), "".to_owned()];
