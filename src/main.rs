@@ -188,3 +188,30 @@ impl Instruments {
 
                             let chain_instruments: [Instrument; 3] = [first_instrument.clone(), second_instrument.clone(), third_instrument.clone()];
                             let mut sides: [String; 3] = ["".to_owned(), "".to_owned(), "".to_owned()];
+                            let mut is_buys = [false; 3];
+                            for idx in 0..3 {
+                                instruments_all_chains.insert(chain_instruments[idx].instrument_name.clone());
+                                if chain_instruments[idx].instrument_name.starts_with(&new_chain_second_level[idx]) {
+                                    is_buys[idx] = false;
+                                    sides[idx] = "SELL".to_owned();
+                                } else {
+                                    is_buys[idx] = true;
+                                    sides[idx] = "BUY".to_owned();
+                                }
+                            }
+                            let orders: [Order; 3] = core::array::from_fn(|i| Order {
+                                instrument_name: chain_instruments[i].instrument_name.clone(),
+                                side: sides[i].clone(),
+                                type_: "LIMIT".to_owned(),
+                                price: None,
+                                quantity: None,
+                                time_in_force: None,
+                            });
+                            let quantity_precisions: [usize; 3] = core::array::from_fn(|i| chain_instruments[i].quantity_decimals);
+
+                            let arbitrage_chain = ArbitrageChain {
+                                orders: orders,
+                                is_buys: is_buys,
+                                quantity_precisions: quantity_precisions,
+                                starting_currency: starting_currency.to_owned(),
+                            };
