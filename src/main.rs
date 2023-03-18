@@ -215,3 +215,30 @@ impl Instruments {
                                 quantity_precisions: quantity_precisions,
                                 starting_currency: starting_currency.to_owned(),
                             };
+
+                            arbitrage_chains.push(arbitrage_chain);
+                            break;
+                        }
+                    }
+                    if new_chain_second_level[2] != "" {
+                        continue;
+                    }
+                }
+            }
+        }
+        let instruments_all_chains_vec: Vec<String> = instruments_all_chains.into_iter().collect();
+        (arbitrage_chains, instruments_all_chains_vec)
+    }
+}
+
+// Structs to serialize WebSocket request
+
+#[derive(Serialize, Debug, Clone)]
+#[serde(tag = "method")]
+pub enum RequestWebSocket {
+    #[serde(rename = "public/respond-heartbeat")]
+    PublicRespondHeartbeat { id: u64 },
+    #[serde(rename = "subscribe")]
+    Subscribe { id: u64, nonce: u64, params: RequestWebSocketParams },
+    #[serde(rename = "public/auth")]
+    Auth { id: u64, api_key: String, sig: String, nonce: u64 },
