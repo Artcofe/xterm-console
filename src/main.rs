@@ -148,3 +148,17 @@ impl Instruments {
             for first_instrument in self
                 .instruments
                 .iter()
+                .filter(|v| v.base_currency == starting_currency || v.quote_currency == starting_currency)
+            {
+                let mut new_chain: [String; 3] = ["".to_owned(), "".to_owned(), "".to_owned()];
+                if first_instrument.quote_currency == starting_currency {
+                    new_chain[0] = first_instrument.quote_currency.clone();
+                    new_chain[1] = first_instrument.base_currency.clone();
+                } else if first_instrument.base_currency == starting_currency {
+                    new_chain[0] = first_instrument.base_currency.clone();
+                    new_chain[1] = first_instrument.quote_currency.clone();
+                } else {
+                    panic!("starting instrument has to contain starting currency (most likely starting currency filtering is broken)");
+                }
+
+                for second_instrument in self.instruments.iter().filter(|v| v.instrument_name != first_instrument.instrument_name) {
