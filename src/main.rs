@@ -270,3 +270,30 @@ pub struct Order {
 }
 
 #[derive(Debug, Serialize, Clone)]
+pub struct OrderCancellation {
+    pub instrument_name: String,
+}
+
+// Structs to deserialize WebSocket responses
+
+#[derive(Deserialize, Debug, Clone)]
+#[serde(tag = "method")]
+pub enum ResponseWebSocket {
+    #[serde(rename = "public/heartbeat")]
+    PublicHeartbeat { id: Option<u64>, code: Option<i64> },
+    #[serde(rename = "public/auth")]
+    Auth { id: u64, code: i64 },
+    #[serde(rename = "subscribe")]
+    Subscribe {
+        id: Option<i64>,
+        code: Option<i64>,
+        result: Option<ResponseResult>,
+    },
+    #[serde(rename = "private/create-order")]
+    CreateOrder {
+        id: i64,
+        code: i64,
+        result: Option<OrderCreationResult>,
+    },
+    #[serde(rename = "private/cancel-all-orders")]
+    CancelAllOrders { id: i64, code: i64 },
