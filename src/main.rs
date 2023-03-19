@@ -242,3 +242,31 @@ pub enum RequestWebSocket {
     Subscribe { id: u64, nonce: u64, params: RequestWebSocketParams },
     #[serde(rename = "public/auth")]
     Auth { id: u64, api_key: String, sig: String, nonce: u64 },
+    #[serde(rename = "private/create-order")]
+    CreateOrder { id: i64, nonce: u64, params: Order },
+    #[serde(rename = "private/cancel-all-orders")]
+    CancelAllOrders { id: i64, nonce: u64, params: OrderCancellation },
+}
+
+#[derive(Serialize, Debug, Clone)]
+pub enum RequestWebSocketParams {
+    #[serde(rename = "channels")]
+    Channels(Vec<String>),
+}
+
+#[derive(Debug, Serialize, Clone)]
+pub struct Order {
+    pub instrument_name: String,
+    pub side: String,
+    #[serde(rename(serialize = "type"))]
+    pub type_: String,
+    #[serde(with = "rust_decimal::serde::float_option")]
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub price: Option<Decimal>,
+    #[serde(with = "rust_decimal::serde::float_option")]
+    pub quantity: Option<Decimal>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub time_in_force: Option<String>,
+}
+
+#[derive(Debug, Serialize, Clone)]
