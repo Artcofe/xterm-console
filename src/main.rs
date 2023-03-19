@@ -317,3 +317,21 @@ pub enum ResponseResult {
 #[derive(Deserialize, Debug, Clone)]
 pub struct TickerData {
     #[serde(alias = "i")]
+    pub instrument: Option<String>,
+    #[serde(alias = "vv")]
+    pub vol_traded_day_usd: f64,
+    #[serde(alias = "a")]
+    #[serde(with = "rust_decimal::serde::float")]
+    pub price_lastest_trade: Decimal,
+    #[serde(alias = "b")]
+    #[serde(with = "rust_decimal::serde::float")]
+    pub price_bid_best: Decimal,
+    #[serde(alias = "k")]
+    #[serde(with = "rust_decimal::serde::float")]
+    pub price_ask_best: Decimal,
+}
+
+#[derive(Deserialize, Debug, Clone)]
+pub struct UserOrderData {
+    pub status: String,
+    pub side: String,
