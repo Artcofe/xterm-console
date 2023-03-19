@@ -297,3 +297,23 @@ pub enum ResponseWebSocket {
     },
     #[serde(rename = "private/cancel-all-orders")]
     CancelAllOrders { id: i64, code: i64 },
+}
+
+#[derive(Deserialize, Debug, Clone)]
+pub struct OrderCreationResult {
+    pub order_id: String,
+    pub client_oid: Option<String>,
+}
+
+#[derive(Deserialize, Debug, Clone)]
+#[serde(tag = "channel")]
+pub enum ResponseResult {
+    #[serde(rename = "ticker")]
+    Ticker { instrument_name: String, data: Vec<TickerData> },
+    #[serde(rename = "user.order")]
+    UserOrder { instrument_name: String, data: Vec<UserOrderData> },
+}
+
+#[derive(Deserialize, Debug, Clone)]
+pub struct TickerData {
+    #[serde(alias = "i")]
