@@ -335,3 +335,23 @@ pub struct TickerData {
 pub struct UserOrderData {
     pub status: String,
     pub side: String,
+    #[serde(with = "rust_decimal::serde::float")]
+    pub price: Decimal,
+    #[serde(with = "rust_decimal::serde::float")]
+    pub quantity: Decimal,
+    pub order_id: String,
+    pub client_oid: String,
+    pub create_time: u64,
+    pub update_time: u64,
+    #[serde(alias = "type")]
+    pub type_: String,
+    pub instrument_name: String,
+    #[serde(with = "rust_decimal::serde::float")]
+    pub cumulative_quantity: Decimal,
+    #[serde(with = "rust_decimal::serde::float")]
+    pub cumulative_value: Decimal,
+    pub avg_price: f64,
+    pub fee_currency: String,
+    pub time_in_force: String,
+    pub reason: Option<u64>,
+}
