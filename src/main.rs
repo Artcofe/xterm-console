@@ -355,3 +355,26 @@ pub struct UserOrderData {
     pub time_in_force: String,
     pub reason: Option<u64>,
 }
+
+// DD: UserWebSocket allows to send the orders to the its request channel.
+// All the broadcast channel subscribers are going to receive all the
+// updates on the current orders, which they are going to filter out themselves.
+
+pub struct UserWebSocket {
+    pub mpsc_request_sender: mpsc::Sender<RequestWebSocket>,
+    pub broadcast_response_sender: broadcast::Sender<ResponseWebSocket>,
+    pub request_task_handle: JoinHandle<()>,
+    pub response_task_handle: JoinHandle<()>,
+}
+
+impl UserWebSocket {
+    async fn new() -> UserWebSocket {
+        let (ws_stream, _) = connect_async(USER_WS_URL.to_owned()).await.expect("failed to connect to user websocket");
+        let (mut ws_writer, mut ws_reader) = ws_stream.split();
+
+        let (mpsc_request_sender, mut mpsc_request_receiver): (mpsc::Sender<RequestWebSocket>, mpsc::Receiver<RequestWebSocket>) =
+            mpsc::channel(USER_MPSC_REQUEST_CAPACITY);
+        let request_task_handle = tokio::spawn(async move {
+            while let Some(message) = mpsc_request_receiver.recv().await {
+                let request_body_serialized = to_string(&message).unwrap();
+                let request_message = Message::text(request_body_serialized);
