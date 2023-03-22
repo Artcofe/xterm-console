@@ -394,3 +394,20 @@ impl UserWebSocket {
                     Some(ResponseWebSocket::PublicHeartbeat { id, .. }) => {
                         let respond_heartbeat_request = RequestWebSocket::PublicRespondHeartbeat { id: id.unwrap() };
                         mpsc_request_sender_clone.try_send(respond_heartbeat_request).unwrap();
+                    }
+                    Some(rws) => {
+                        broadcast_response_sender.send(rws);
+                    }
+                    None => {
+                        continue;
+                    }
+                }
+            }
+        });
+
+        UserWebSocket {
+            mpsc_request_sender: mpsc_request_sender,
+            broadcast_response_sender: broadcast_response_sender_clone,
+            request_task_handle: request_task_handle,
+            response_task_handle: response_task_handle,
+        }
