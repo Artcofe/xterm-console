@@ -411,3 +411,31 @@ impl UserWebSocket {
             request_task_handle: request_task_handle,
             response_task_handle: response_task_handle,
         }
+    }
+
+    async fn auth(&self) {
+        let id = rand::random::<u16>() as u64;
+        let nonce = SystemTime::now().duration_since(SystemTime::UNIX_EPOCH).unwrap().as_millis() as u64;
+        let payload_str = format!("{}{}{}{}{}", "public/auth", id, API_KEY, "".to_owned(), nonce);
+        let sig = hex::encode(HMAC::mac(&payload_str, SECRET_KEY));
+        let request_auth = RequestWebSocket::Auth {
+            id: id,
+            api_key: API_KEY.to_owned(),
+            sig: sig,
+            nonce: nonce,
+        };
+        let mut broadcast_response_receiver = self.broadcast_response_sender.subscribe();
+        self.mpsc_request_sender.send(request_auth).await.unwrap();
+        match broadcast_response_receiver.recv().await.unwrap() {
+            ResponseWebSocket::Auth {
+                id: response_id,
+                code: response_code,
+                ..
+            } => {
+                if !(id == response_id && response_code == 0) {
+                    panic!("failed to authenticate to user websocket");
+                }
+            }
+            _ => panic!("received something else instead of user ws authentication confirmation"),
+        }
+    }
