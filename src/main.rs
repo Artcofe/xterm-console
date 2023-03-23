@@ -439,3 +439,31 @@ impl UserWebSocket {
             _ => panic!("received something else instead of user ws authentication confirmation"),
         }
     }
+
+    async fn subscribe(&self, instruments: &Vec<String>, channel: &str) {
+        let channels: Vec<String>;
+        match channel {
+            "user.order" => channels = instruments.iter().map(|v| format!("user.order.{}", v)).collect(),
+            _ => panic!("unknown channel type"),
+        }
+        let id = rand::random::<u16>() as u64;
+        let nonce = SystemTime::now().duration_since(SystemTime::UNIX_EPOCH).unwrap().as_millis() as u64;
+        let request_subscribe = RequestWebSocket::Subscribe {
+            id: id,
+            nonce: nonce,
+            params: RequestWebSocketParams::Channels(channels),
+        };
+        let mut broadcast_response_receiver = self.broadcast_response_sender.subscribe();
+        self.mpsc_request_sender.send(request_subscribe).await.unwrap();
+        match broadcast_response_receiver.recv().await.unwrap() {
+            ResponseWebSocket::Subscribe {
+                id: _, code: response_code, ..
+            } => {
+                if response_code != Some(0) {
+                    panic!("failed to subscribe to user websocket");
+                }
+            }
+            _ => panic!("received something else instead of user ws subscription confirmation"),
+        }
+    }
+}
