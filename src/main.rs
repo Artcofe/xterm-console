@@ -498,3 +498,25 @@ impl MarketWebSocket {
         let (mpsc_request_sender, mut mpsc_request_receiver): (mpsc::Sender<RequestWebSocket>, mpsc::Receiver<RequestWebSocket>) =
             mpsc::channel(MARKET_MPSC_REQUEST_CAPACITY);
         let request_task_handle = tokio::spawn(async move {
+            while let Some(message) = mpsc_request_receiver.recv().await {
+                let request_body_serialized = to_string(&message).unwrap();
+                let request_message = Message::text(request_body_serialized);
+                ws_writer.send(request_message).await.unwrap();
+            }
+        });
+
+        let mpsc_request_sender_clone = mpsc_request_sender.clone();
+        let (broadcast_response_sender, _): (broadcast::Sender<ResponseWebSocket>, broadcast::Receiver<ResponseWebSocket>) =
+            broadcast::channel(MARKET_BROADCAST_RESPONSE_CAPACITY);
+        let broadcast_response_sender_clone = broadcast_response_sender.clone();
+        let stream_task_handle = tokio::spawn(async move {
+            // DD: ws_reader is almost always ready, so to get a healthy work distribution
+            // between tasks I had to put yields all over the place.
+            while let Some(message) = ws_reader.next().await {
+                let data = message.unwrap().into_text().unwrap();
+                let response_ws: Option<ResponseWebSocket> = from_str(&data).ok();
+                yield_now().await;
+                match response_ws {
+                    Some(ResponseWebSocket::PublicHeartbeat { id, .. }) => {
+                        let respond_heartbeat_request = RequestWebSocket::PublicRespondHeartbeat { id: id.unwrap() };
+                        mpsc_request_sender.try_send(respond_heartbeat_request).unwrap();
