@@ -467,3 +467,34 @@ impl UserWebSocket {
         }
     }
 }
+
+#[derive(Debug, Clone)]
+pub struct MarketUpdate {
+    pub instrument_name: String,
+    pub price_ask_best: Decimal,
+    pub price_bid_best: Decimal,
+}
+
+// DD: MarketWebSocket allows currently allows only to subscribe to ticker channel.
+// instrument_channels field stores a HashMap with instrument -> broadcast channel
+// pairs, which allows users to subscribe only to the channels that they need.
+
+pub struct MarketWebSocket {
+    pub mpsc_request_sender: mpsc::Sender<RequestWebSocket>,
+    pub broadcast_response_sender: broadcast::Sender<ResponseWebSocket>,
+    pub request_task_handle: JoinHandle<()>,
+    pub stream_task_handle: JoinHandle<()>,
+    pub dispatch_task_handle: Option<JoinHandle<()>>,
+    pub instrument_channels: Option<HashMap<String, broadcast::Sender<MarketUpdate>>>,
+}
+
+impl MarketWebSocket {
+    async fn new() -> MarketWebSocket {
+        let (ws_stream, _) = connect_async(MARKET_WS_URL.to_owned())
+            .await
+            .expect("failed to connect to market websocket");
+        let (mut ws_writer, mut ws_reader) = ws_stream.split();
+
+        let (mpsc_request_sender, mut mpsc_request_receiver): (mpsc::Sender<RequestWebSocket>, mpsc::Receiver<RequestWebSocket>) =
+            mpsc::channel(MARKET_MPSC_REQUEST_CAPACITY);
+        let request_task_handle = tokio::spawn(async move {
