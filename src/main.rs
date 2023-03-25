@@ -541,3 +541,24 @@ impl MarketWebSocket {
             stream_task_handle: stream_task_handle,
             dispatch_task_handle: None,
             instrument_channels: None,
+        }
+    }
+
+    async fn subscribe(&mut self, instruments: &Vec<String>, channel: &str) {
+        let channels: Vec<String>;
+        match channel {
+            "ticker" => channels = instruments.iter().map(|v| format!("ticker.{}", v)).collect(),
+            _ => panic!("market subscribe: unknown channel type"),
+        }
+
+        let mut instrument_channels: HashMap<String, broadcast::Sender<MarketUpdate>> = HashMap::with_capacity(instruments.len());
+        for instrument_name in instruments.iter() {
+            let (broadcast_response_sender_dispatch, _): (broadcast::Sender<MarketUpdate>, broadcast::Receiver<MarketUpdate>) =
+                broadcast::channel(MARKET_BROADCAST_DISPATCH_CAPACITY);
+            instrument_channels.insert(instrument_name.to_string(), broadcast_response_sender_dispatch);
+        }
+        let instrument_channels_clone_dispatch = instrument_channels.clone();
+        let mut broadcast_response_receiver_instance_dispatch = self.broadcast_response_sender.subscribe();
+        let dispatch_task_handle = tokio::spawn(async move {
+            while let Ok(update) = broadcast_response_receiver_instance_dispatch.recv().await {
+                match update {
