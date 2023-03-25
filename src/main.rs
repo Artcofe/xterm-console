@@ -562,3 +562,28 @@ impl MarketWebSocket {
         let dispatch_task_handle = tokio::spawn(async move {
             while let Ok(update) = broadcast_response_receiver_instance_dispatch.recv().await {
                 match update {
+                    ResponseWebSocket::Subscribe {
+                        id: _,
+                        code: _,
+                        result: Some(ResponseResult::Ticker { instrument_name, data, .. }),
+                    } => {
+                        let instrument_channel = &instrument_channels_clone_dispatch[&instrument_name];
+                        // DD: Price of the latest trade should be taken into account if it's not
+                        // between best bid and ask prices. This way you should get more orders filled.
+                        let mut price_ask_best = data[0].price_ask_best;
+                        let mut price_bid_best = data[0].price_bid_best;
+                        if data[0].price_lastest_trade > data[0].price_ask_best {
+                            price_ask_best = data[0].price_lastest_trade;
+                        }
+                        if data[0].price_lastest_trade < data[0].price_bid_best {
+                            price_bid_best = data[0].price_lastest_trade;
+                        }
+                        let market_update = MarketUpdate {
+                            instrument_name: instrument_name,
+                            price_ask_best: price_ask_best,
+                            price_bid_best: price_bid_best,
+                        };
+                        instrument_channel.send(market_update);
+                    }
+                    ResponseWebSocket::Subscribe {
+                        id: _,
