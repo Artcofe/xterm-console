@@ -587,3 +587,22 @@ impl MarketWebSocket {
                     }
                     ResponseWebSocket::Subscribe {
                         id: _,
+                        code: _,
+                        result: None,
+                    } => continue,
+                    _ => panic!("market dispatch: received unknown message type"),
+                }
+            }
+        });
+        self.dispatch_task_handle = Some(dispatch_task_handle);
+        self.instrument_channels = Some(instrument_channels);
+
+        let id = rand::random::<u16>() as u64;
+        let nonce = SystemTime::now().duration_since(SystemTime::UNIX_EPOCH).unwrap().as_millis() as u64;
+        let request_subscribe = RequestWebSocket::Subscribe {
+            id: id,
+            nonce: nonce,
+            params: RequestWebSocketParams::Channels(channels),
+        };
+        let mut broadcast_response_receiver_instance_subscription = self.broadcast_response_sender.subscribe();
+        self.mpsc_request_sender.send(request_subscribe).await.unwrap();
