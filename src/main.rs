@@ -520,3 +520,24 @@ impl MarketWebSocket {
                     Some(ResponseWebSocket::PublicHeartbeat { id, .. }) => {
                         let respond_heartbeat_request = RequestWebSocket::PublicRespondHeartbeat { id: id.unwrap() };
                         mpsc_request_sender.try_send(respond_heartbeat_request).unwrap();
+                        yield_now().await;
+                    }
+                    Some(rws) => {
+                        broadcast_response_sender.send(rws);
+                        yield_now().await;
+                    }
+                    None => {
+                        yield_now().await;
+                        continue;
+                    }
+                }
+            }
+        });
+
+        MarketWebSocket {
+            mpsc_request_sender: mpsc_request_sender_clone,
+            broadcast_response_sender: broadcast_response_sender_clone,
+            request_task_handle: request_task_handle,
+            stream_task_handle: stream_task_handle,
+            dispatch_task_handle: None,
+            instrument_channels: None,
