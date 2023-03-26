@@ -606,3 +606,24 @@ impl MarketWebSocket {
         };
         let mut broadcast_response_receiver_instance_subscription = self.broadcast_response_sender.subscribe();
         self.mpsc_request_sender.send(request_subscribe).await.unwrap();
+        match broadcast_response_receiver_instance_subscription.recv().await.unwrap() {
+            ResponseWebSocket::Subscribe {
+                id: _, code: response_code, ..
+            } => {
+                if response_code != Some(0) {
+                    panic!("market subscribe: failed to subscribe to user websocket");
+                }
+            }
+            _ => panic!("market subscribe: received something else instead of user ws subscription confirmation"),
+        }
+    }
+}
+
+// DD: The main function.
+//
+// 1. Initial stage: filter out the instruments with low volumes,
+// build the chains, get price and quantity precisions, subscribe
+// to all the websocket channels that we need.
+// 2. Main stage: Spawn a dedicated task for each chain.
+// 3. Arbitrage task.
+//   3.1. The most convenient way to manage the opportunities discovery
