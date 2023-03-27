@@ -643,3 +643,26 @@ impl MarketWebSocket {
 
 pub enum ArbExecutorState<'a> {
     Pending(u64),
+    Collecting,
+    CalculationReady,
+    ExecutionReady(u8, SemaphorePermit<'a>, bool),        // step, permit, cancellation flag
+    ExecutionStop(SemaphorePermit<'a>, bool),             // permit, "suspend execution" flag
+    ExecutionPending(u8, SemaphorePermit<'a>, bool, u64), // step, permit, cancellation flag, millisecond timestamp
+}
+
+#[tokio::main]
+async fn main() {
+    // DD: The preparation part is more or less self-explanatory according to
+    // logging messages.
+    let client = reqwest::Client::new();
+    print!("getting exchange info... ");
+    let mut instr: Instruments = get_exc(&client, "https://api.crypto.com/v2/public/get-instruments").await.unwrap();
+    let ticker_data: TickersData = get_exc(&client, "https://api.crypto.com/v2/public/get-ticker").await.unwrap();
+    print!("done\n");
+    io::stdout().flush().unwrap();
+
+    print!("building chains... ");
+    instr.filter_day_vol(ticker_data.data, DAY_VOLUME_THRESHOLD);
+    let (arbitrage_chains, instruments_all_chains_vec) = instr.get_chains(STARTING_CURRENCIES.to_vec(), CHAINS_APPROX_FRACTION);
+    print!(
+        "done, built {} chains that use {} instruments\n",
