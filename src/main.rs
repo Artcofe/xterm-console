@@ -675,3 +675,31 @@ async fn main() {
     let user_ws = UserWebSocket::new().await;
     user_ws.auth().await;
     print!("done\n");
+    io::stdout().flush().unwrap();
+
+    print!("attempting user websocket subscription and execute arbitrage task spawn... ");
+    user_ws.subscribe(&instruments_all_chains_vec, "user.order").await;
+    print!("done\n");
+
+    io::stdout().flush().unwrap();
+
+    print!("attempting market websocket handshake... ");
+    let mut market_ws = MarketWebSocket::new().await;
+    print!("done\n");
+    io::stdout().flush().unwrap();
+
+    print!("attempting main websocket subscription... ");
+    market_ws.subscribe(&instruments_all_chains_vec, "ticker").await;
+    print!("done\n");
+    io::stdout().flush().unwrap();
+
+    println!("spawning tasks and starting the processing");
+
+    let arb_chain_execution_semaphore = Arc::new(Semaphore::new(1));
+    let mut tasks: Vec<_> = Vec::new();
+    for mut arbitrage_chain in arbitrage_chains.into_iter() {
+        let mut user_broadcast_response_receiver = user_ws.broadcast_response_sender.subscribe();
+        let user_mpsc_request_sender = user_ws.mpsc_request_sender.clone();
+        let mut market_instrument_channel_receiver_0: broadcast::Receiver<MarketUpdate> =
+            market_ws.instrument_channels.as_ref().unwrap()[&arbitrage_chain.orders[0].instrument_name].subscribe();
+        let mut market_instrument_channel_receiver_1: broadcast::Receiver<MarketUpdate> =
