@@ -627,3 +627,19 @@ impl MarketWebSocket {
 // 2. Main stage: Spawn a dedicated task for each chain.
 // 3. Arbitrage task.
 //   3.1. The most convenient way to manage the opportunities discovery
+//        and execution I came up with is to write a simple state machine.
+//        There are a lot of scenarios that happen during the trading, but
+//        they can be easily grouped into a few states. This approach
+//        greatly simplifies the control flow and is easy to manage as we can
+//        clearly see and define all the rules of how the executor changes its
+//        state.
+//   3.2. The state is known at the start and at the end of each iteration of
+//        the infinite loop.
+//   3.3. Semaphore with capacity of 1 is used to make sure we only execute
+//        one chain at a time - basically this is a simple replacement for
+//        asset allocation mechanism, which works because asset allocation is
+//        about scaling the work of the bot, but you obviously don't need any
+//        scaling it when the profits are less than or equal to zero.
+
+pub enum ArbExecutorState<'a> {
+    Pending(u64),
