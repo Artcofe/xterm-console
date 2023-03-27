@@ -666,3 +666,12 @@ async fn main() {
     let (arbitrage_chains, instruments_all_chains_vec) = instr.get_chains(STARTING_CURRENCIES.to_vec(), CHAINS_APPROX_FRACTION);
     print!(
         "done, built {} chains that use {} instruments\n",
+        arbitrage_chains.len(),
+        instruments_all_chains_vec.len()
+    );
+    io::stdout().flush().unwrap();
+
+    print!("attempting user websocket handshake... ");
+    let user_ws = UserWebSocket::new().await;
+    user_ws.auth().await;
+    print!("done\n");
