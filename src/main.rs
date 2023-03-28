@@ -703,3 +703,18 @@ async fn main() {
         let mut market_instrument_channel_receiver_0: broadcast::Receiver<MarketUpdate> =
             market_ws.instrument_channels.as_ref().unwrap()[&arbitrage_chain.orders[0].instrument_name].subscribe();
         let mut market_instrument_channel_receiver_1: broadcast::Receiver<MarketUpdate> =
+            market_ws.instrument_channels.as_ref().unwrap()[&arbitrage_chain.orders[1].instrument_name].subscribe();
+        let mut market_instrument_channel_receiver_2: broadcast::Receiver<MarketUpdate> =
+            market_ws.instrument_channels.as_ref().unwrap()[&arbitrage_chain.orders[2].instrument_name].subscribe();
+        let arb_chain_execution_semaphore_instance = arb_chain_execution_semaphore.clone();
+
+        let handle = tokio::spawn(async move {
+            let time_format = time::format_description::parse("[year]-[month]-[day] [hour]:[minute]:[second]").unwrap();
+            let current_balance: Decimal;
+            if arbitrage_chain.starting_currency == "USDT".to_owned() {
+                current_balance = STARTING_BALANCE_USDT;
+            } else if arbitrage_chain.starting_currency == "USDC".to_owned() {
+                current_balance = STARTING_BALANCE_USDC;
+            } else if arbitrage_chain.starting_currency == "BTC".to_owned() {
+                current_balance = STARTING_BALANCE_BTC;
+            } else {
