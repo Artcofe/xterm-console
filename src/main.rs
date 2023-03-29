@@ -731,3 +731,28 @@ async fn main() {
                         } else {
                             arbitrage_chain.orders[0].price = Some(market_update.price_bid_best);
                         }
+                    },
+                    Ok(market_update) = market_instrument_channel_receiver_1.recv() => {
+                        if arbitrage_chain.is_buys[1] {
+                            arbitrage_chain.orders[1].price = Some(market_update.price_ask_best);
+                        } else {
+                            arbitrage_chain.orders[1].price = Some(market_update.price_bid_best);
+                        }
+                    },
+                    Ok(market_update) = market_instrument_channel_receiver_2.recv() => {
+                        if arbitrage_chain.is_buys[2] {
+                            arbitrage_chain.orders[2].price = Some(market_update.price_ask_best);
+                        } else {
+                            arbitrage_chain.orders[2].price = Some(market_update.price_bid_best);
+                        }
+                    }
+                }
+
+                arb_executor_state = match arb_executor_state {
+                    ArbExecutorState::Pending(timestamp) => {
+                        let now = SystemTime::now().duration_since(SystemTime::UNIX_EPOCH).unwrap().as_millis() as u64;
+                        if now - timestamp > ARB_EXECUTOR_PENDING_TIMEOUT {
+                            ArbExecutorState::Collecting
+                        } else {
+                            ArbExecutorState::Pending(timestamp)
+                        }
