@@ -718,3 +718,16 @@ async fn main() {
             } else if arbitrage_chain.starting_currency == "BTC".to_owned() {
                 current_balance = STARTING_BALANCE_BTC;
             } else {
+                panic!("arb executor: unexpected first chain node");
+            }
+
+            let mut arb_executor_state = ArbExecutorState::Collecting;
+
+            loop {
+                tokio::select! {
+                    Ok(market_update) = market_instrument_channel_receiver_0.recv() => {
+                        if arbitrage_chain.is_buys[0] {
+                            arbitrage_chain.orders[0].price = Some(market_update.price_ask_best);
+                        } else {
+                            arbitrage_chain.orders[0].price = Some(market_update.price_bid_best);
+                        }
