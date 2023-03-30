@@ -756,3 +756,34 @@ async fn main() {
                         } else {
                             ArbExecutorState::Pending(timestamp)
                         }
+                    }
+                    ArbExecutorState::Collecting => {
+                        if arbitrage_chain.orders.iter().all(|o| o.price.is_some()) {
+                            ArbExecutorState::CalculationReady
+                        } else {
+                            ArbExecutorState::Collecting
+                        }
+                    }
+                    ArbExecutorState::CalculationReady => {
+                        let mut gain = dec!(1.0);
+                        let mut outcome = current_balance;
+                        for idx in 0..3 {
+                            if arbitrage_chain.is_buys[idx] {
+                                outcome = ((outcome * TRADING_FEE) / arbitrage_chain.orders[idx].price.unwrap())
+                                    .round_dp_with_strategy(arbitrage_chain.quantity_precisions[idx] as u32, RoundingStrategy::ToZero);
+                                arbitrage_chain.orders[idx].quantity = Some(outcome);
+                                gain = (gain * TRADING_FEE) / arbitrage_chain.orders[idx].price.unwrap();
+                            } else {
+                                outcome = (outcome * TRADING_FEE)
+                                    .round_dp_with_strategy(arbitrage_chain.quantity_precisions[idx] as u32, RoundingStrategy::ToZero);
+                                arbitrage_chain.orders[idx].quantity = Some(outcome);
+                                gain = gain * TRADING_FEE * arbitrage_chain.orders[idx].price.unwrap();
+                                outcome = outcome * arbitrage_chain.orders[idx].price.unwrap();
+                            }
+                        }
+
+                        if gain >= GAIN_THRESHOLD {
+                            if RESEARCH_MODE {
+                                let now = OffsetDateTime::from(SystemTime::now()).format(&time_format).unwrap();
+                                println!("time: {}, arbitrage chain: {:#?}, gain: {}", now, arbitrage_chain, gain);
+                                ArbExecutorState::CalculationReady
