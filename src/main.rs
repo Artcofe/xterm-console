@@ -802,3 +802,22 @@ async fn main() {
                     }
                     ArbExecutorState::ExecutionReady(step, permit, false) => {
                         let id = rand::random::<u16>() as i64;
+                        let nonce = SystemTime::now().duration_since(SystemTime::UNIX_EPOCH).unwrap().as_millis() as u64;
+                        let request_create_order = RequestWebSocket::CreateOrder {
+                            id: id,
+                            nonce: nonce,
+                            params: arbitrage_chain.orders[step as usize].clone(),
+                        };
+                        println!("ordering: {:#?}", request_create_order);
+                        user_mpsc_request_sender.send(request_create_order).await.unwrap();
+                        ArbExecutorState::ExecutionPending(step, permit, false, nonce)
+                    }
+                    ArbExecutorState::ExecutionReady(step, permit, true) => {
+                        let id = rand::random::<u16>() as i64;
+                        let nonce = SystemTime::now().duration_since(SystemTime::UNIX_EPOCH).unwrap().as_millis() as u64;
+                        let market_order = arbitrage_chain.orders[step as usize].clone();
+                        let request_cancellation_order = RequestWebSocket::CancelAllOrders {
+                            id: id,
+                            nonce: nonce,
+                            params: OrderCancellation {
+                                instrument_name: market_order.instrument_name,
