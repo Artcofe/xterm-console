@@ -787,3 +787,18 @@ async fn main() {
                                 let now = OffsetDateTime::from(SystemTime::now()).format(&time_format).unwrap();
                                 println!("time: {}, arbitrage chain: {:#?}, gain: {}", now, arbitrage_chain, gain);
                                 ArbExecutorState::CalculationReady
+                            } else {
+                                if let Ok(permit) = arb_chain_execution_semaphore_instance.try_acquire() {
+                                    let now = OffsetDateTime::from(SystemTime::now()).format(&time_format).unwrap();
+                                    println!("time: {}, arbitrage chain: {:#?}, gain: {}", now, arbitrage_chain, gain);
+                                    ArbExecutorState::ExecutionReady(0, permit, false)
+                                } else {
+                                    ArbExecutorState::CalculationReady
+                                }
+                            }
+                        } else {
+                            ArbExecutorState::CalculationReady
+                        }
+                    }
+                    ArbExecutorState::ExecutionReady(step, permit, false) => {
+                        let id = rand::random::<u16>() as i64;
