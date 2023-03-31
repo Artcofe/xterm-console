@@ -821,3 +821,24 @@ async fn main() {
                             nonce: nonce,
                             params: OrderCancellation {
                                 instrument_name: market_order.instrument_name,
+                            },
+                        };
+                        println!("cancelling: {:#?}", request_cancellation_order);
+                        user_mpsc_request_sender.send(request_cancellation_order).await.unwrap();
+                        ArbExecutorState::ExecutionPending(step, permit, true, nonce)
+                    }
+                    ArbExecutorState::ExecutionStop(permit, needs_wait) => {
+                        drop(permit);
+                        let res: Option<ArbExecutorState>;
+                        if needs_wait {
+                            let now = SystemTime::now().duration_since(SystemTime::UNIX_EPOCH).unwrap().as_millis() as u64;
+                            res = Some(ArbExecutorState::Pending(now));
+                        } else {
+                            res = Some(ArbExecutorState::Collecting);
+                        }
+                        if let Some(state) = res {
+                            state
+                        } else {
+                            panic!("arb executor: no state generated as a result of ExecutionStop processing");
+                        }
+                    }
