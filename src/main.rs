@@ -842,3 +842,28 @@ async fn main() {
                             panic!("arb executor: no state generated as a result of ExecutionStop processing");
                         }
                     }
+                    ArbExecutorState::ExecutionPending(step, permit, is_cancellation, nonce) => {
+                        let res: Option<ArbExecutorState>;
+                        if let Ok(user_channel_msg) = user_broadcast_response_receiver.try_recv() {
+                            match user_channel_msg {
+                                ResponseWebSocket::CreateOrder { id: _, code, result: _ } => {
+                                    if code != 0 {
+                                        println!("arb executor: received non-zero code on order confirmation: {}", code);
+                                        res = Some(ArbExecutorState::ExecutionStop(permit, true));
+                                    } else {
+                                        println!("arb executor: received order confirmation");
+                                        res = Some(ArbExecutorState::ExecutionPending(step, permit, is_cancellation, nonce));
+                                    }
+                                }
+                                ResponseWebSocket::CancelAllOrders { id: _, code } => {
+                                    if code != 0 {
+                                        println!(
+                                            "arb executor: received non-zero code on order confirmation, breaking order execution: {}",
+                                            code
+                                        );
+                                        res = Some(ArbExecutorState::ExecutionStop(permit, true));
+                                    } else {
+                                        println!("arb executor: received order confirmation");
+                                        res = Some(ArbExecutorState::ExecutionPending(step, permit, is_cancellation, nonce));
+                                    }
+                                }
