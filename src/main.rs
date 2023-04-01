@@ -867,3 +867,29 @@ async fn main() {
                                         res = Some(ArbExecutorState::ExecutionPending(step, permit, is_cancellation, nonce));
                                     }
                                 }
+                                ResponseWebSocket::Subscribe {
+                                    id: _,
+                                    code: _,
+                                    result: Some(ResponseResult::UserOrder { data, .. }),
+                                } => {
+                                    println!("arb executor: received main order response: {:#?}", data);
+                                    if data[0].instrument_name == arbitrage_chain.orders[step as usize].instrument_name {
+                                        if data[0].status == "ACTIVE".to_owned() {
+                                            println!("arb executor: got ACTIVE status for limit order, waiting");
+                                            res = Some(ArbExecutorState::ExecutionPending(step, permit, is_cancellation, nonce));
+                                        } else if data[0].status == "REJECTED".to_owned() {
+                                            println!("arb executor: got REJECTED status for limit order, breaking order execution");
+                                            res = Some(ArbExecutorState::ExecutionStop(permit, true));
+                                        } else if data[0].status == "CANCELED".to_owned() && !is_cancellation {
+                                            println!("arb executor: got CANCELED status for LIMIT order, breaking order execution");
+                                            res = Some(ArbExecutorState::ExecutionStop(permit, false));
+                                        } else if data[0].status == "CANCELED".to_owned() && is_cancellation {
+                                            println!("arb executor: got CANCELED status for CANCELED order, successfully breaking order execution");
+                                            res = Some(ArbExecutorState::ExecutionStop(permit, true));
+                                        } else if data[0].status == "FILLED".to_owned() && !is_cancellation {
+                                            if step == 0 || step == 1 {
+                                                if arbitrage_chain.is_buys[step as usize] && !arbitrage_chain.is_buys[(step + 1) as usize] {
+                                                    arbitrage_chain.orders[(step + 1) as usize].quantity =
+                                                        Some((data[0].cumulative_quantity * TRADING_FEE).round_dp_with_strategy(
+                                                            arbitrage_chain.quantity_precisions[(step + 1) as usize] as u32,
+                                                            RoundingStrategy::ToZero,
