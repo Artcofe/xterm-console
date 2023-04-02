@@ -914,3 +914,23 @@ async fn main() {
                                                     );
                                                 } else if !arbitrage_chain.is_buys[step as usize] && !arbitrage_chain.is_buys[(step + 1) as usize] {
                                                     arbitrage_chain.orders[(step + 1) as usize].quantity =
+                                                        Some((data[0].cumulative_value * TRADING_FEE).round_dp_with_strategy(
+                                                            arbitrage_chain.quantity_precisions[(step + 1) as usize] as u32,
+                                                            RoundingStrategy::ToZero,
+                                                        ));
+                                                } else {
+                                                    panic!("arb executor: bad is_buys combination");
+                                                }
+                                                println!("arb executor: order filled, proceeding execution");
+                                                res = Some(ArbExecutorState::ExecutionReady(step + 1, permit, false));
+                                            } else if step == 2 {
+                                                println!("arb executor: successfully finished, breaking order execution");
+                                                res = Some(ArbExecutorState::ExecutionStop(permit, false));
+                                            } else {
+                                                panic!("arb executor: bad step value");
+                                            }
+                                        } else {
+                                            panic!("arb executor: bad order status scenario");
+                                        }
+                                    } else {
+                                        res = Some(ArbExecutorState::ExecutionPending(step, permit, is_cancellation, nonce));
