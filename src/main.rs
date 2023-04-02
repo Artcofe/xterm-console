@@ -893,3 +893,24 @@ async fn main() {
                                                         Some((data[0].cumulative_quantity * TRADING_FEE).round_dp_with_strategy(
                                                             arbitrage_chain.quantity_precisions[(step + 1) as usize] as u32,
                                                             RoundingStrategy::ToZero,
+                                                        ));
+                                                } else if arbitrage_chain.is_buys[step as usize] && arbitrage_chain.is_buys[(step + 1) as usize] {
+                                                    arbitrage_chain.orders[(step + 1) as usize].quantity = Some(
+                                                        ((data[0].cumulative_quantity * TRADING_FEE)
+                                                            / arbitrage_chain.orders[(step + 1) as usize].price.unwrap())
+                                                        .round_dp_with_strategy(
+                                                            arbitrage_chain.quantity_precisions[(step + 1) as usize] as u32,
+                                                            RoundingStrategy::ToZero,
+                                                        ),
+                                                    );
+                                                } else if !arbitrage_chain.is_buys[step as usize] && arbitrage_chain.is_buys[(step + 1) as usize] {
+                                                    arbitrage_chain.orders[(step + 1) as usize].quantity = Some(
+                                                        ((data[0].cumulative_value * TRADING_FEE)
+                                                            / arbitrage_chain.orders[(step + 1) as usize].price.unwrap())
+                                                        .round_dp_with_strategy(
+                                                            arbitrage_chain.quantity_precisions[(step + 1) as usize] as u32,
+                                                            RoundingStrategy::ToZero,
+                                                        ),
+                                                    );
+                                                } else if !arbitrage_chain.is_buys[step as usize] && !arbitrage_chain.is_buys[(step + 1) as usize] {
+                                                    arbitrage_chain.orders[(step + 1) as usize].quantity =
