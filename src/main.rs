@@ -950,3 +950,18 @@ async fn main() {
                             }
                         };
                         if let Some(state) = res {
+                            state
+                        } else {
+                            panic!("arb executor: no state generated as a result of ExecutionPending processing");
+                        }
+                    }
+                };
+            }
+        });
+        tasks.push(handle);
+    }
+
+    println!("main: spawned the tasks");
+    println!("main: awaiting on the websockets tasks handles");
+    market_ws.request_task_handle.await.unwrap();
+}
