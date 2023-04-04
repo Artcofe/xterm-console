@@ -934,3 +934,19 @@ async fn main() {
                                         }
                                     } else {
                                         res = Some(ArbExecutorState::ExecutionPending(step, permit, is_cancellation, nonce));
+                                    }
+                                }
+                                _ => {
+                                    panic!("arb executor: received unknown message");
+                                }
+                            }
+                        } else {
+                            let nonce_now = SystemTime::now().duration_since(SystemTime::UNIX_EPOCH).unwrap().as_millis() as u64;
+                            if nonce_now - nonce > ARB_EXECUTOR_ORDER_TIMEOUT {
+                                println!("arb executor: having ACTIVE status for limit order for too long, cancelling");
+                                res = Some(ArbExecutorState::ExecutionReady(step, permit, true));
+                            } else {
+                                res = Some(ArbExecutorState::ExecutionPending(step, permit, is_cancellation, nonce));
+                            }
+                        };
+                        if let Some(state) = res {
